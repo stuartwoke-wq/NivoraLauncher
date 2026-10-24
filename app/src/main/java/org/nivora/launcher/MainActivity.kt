@@ -1,4 +1,10 @@
 package org.nivora.launcher
+import kotlinx.coroutines.launch
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.Lifecycle
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.DisposableEffect
 
 import android.content.Intent
 import android.os.Bundle
@@ -110,7 +116,24 @@ private fun NivoraApp() {
         loading = false
     }
 
-    LaunchedEffect(Unit) { refreshApps() }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val coroutineScope = rememberCoroutineScope()
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                coroutineScope.launch {
+                    refreshApps()
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     val filteredApps = remember(apps, searchQuery) { AppCatalog.filterAndSort(apps, searchQuery) }
     val background = Brush.verticalGradient(
