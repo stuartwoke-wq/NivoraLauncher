@@ -104,16 +104,23 @@ private fun NivoraApp() {
     var loadError by remember { mutableStateOf(false) }
 
     suspend fun refreshApps() {
-        loading = true
-        loadError = false
-        runCatching {
-            InstalledAppsRepository(context.applicationContext).loadLaunchableApps()
-        }.onSuccess {
-            apps = it
-        }.onFailure {
-            loadError = true
+        val showInitialLoading = apps.isEmpty()
+        if (showInitialLoading) {
+            loading = true
         }
-        loading = false
+        loadError = false
+
+        try {
+            runCatching {
+                InstalledAppsRepository(context.applicationContext).loadLaunchableApps()
+            }.onSuccess {
+                apps = it
+            }.onFailure {
+                loadError = true
+            }
+        } finally {
+            loading = false
+        }
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
