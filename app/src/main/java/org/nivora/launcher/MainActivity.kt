@@ -335,34 +335,91 @@ private fun Dock(
     onAppClick: (LaunchableApp) -> Unit,
     onOpenApps: () -> Unit
 ) {
-    Row(
+    val dockShape = RoundedCornerShape(30.dp)
+
+    // Outer rim: a subtle glass highlight around the dock.
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 22.dp, end = 22.dp, top = 6.dp, bottom = 12.dp)
-            .clip(RoundedCornerShape(27.dp))
-            .background(Color(0xC92A3444))
-            .padding(horizontal = 15.dp, vertical = 11.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        apps.forEach { app ->
-            if (app.bitmap != null) {
-                Image(
-                    bitmap = app.bitmap.asImageBitmap(),
-                    contentDescription = app.label,
-                    modifier = Modifier.size(42.dp).clip(RoundedCornerShape(13.dp)).clickable { onAppClick(app) }
+            .clip(dockShape)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0x80FFFFFF),
+                        Color(0x2266D9E8),
+                        Color(0x33101725)
+                    )
                 )
-            }
-        }
+            )
+            .padding(1.dp)
+    ) {
+        // Inner surface: layered translucency without expensive live blur.
         Box(
             modifier = Modifier
-                .size(42.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color(0xFF465366))
-                .clickable(onClick = onOpenApps),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(29.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xC9364659),
+                            Color(0xC3222D3E),
+                            Color(0xD9141B28)
+                        )
+                    )
+                )
         ) {
-            Icon(Icons.Default.Apps, contentDescription = "All apps", tint = Color.White)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 13.dp, vertical = 11.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                apps.forEach { app ->
+                    if (app.bitmap != null) {
+                        Image(
+                            bitmap = app.bitmap.asImageBitmap(),
+                            contentDescription = app.label,
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(13.dp))
+                                .clickable { onAppClick(app) }
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF66778D),
+                                    Color(0xFF354357)
+                                )
+                            )
+                        )
+                        .clickable(onClick = onOpenApps),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.Apps,
+                        contentDescription = "All apps",
+                        tint = Color.White
+                    )
+                }
+            }
+
+            // Fine top-edge reflection.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0x66FFFFFF))
+            )
         }
     }
 }
