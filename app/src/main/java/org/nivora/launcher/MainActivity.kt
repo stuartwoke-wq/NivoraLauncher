@@ -8,6 +8,8 @@ import androidx.compose.runtime.DisposableEffect
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
+import android.graphics.drawable.ColorDrawable
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -85,6 +87,8 @@ private val SecondaryText = Color(0xFFB8C1CF)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER)
+        window.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
         enableEdgeToEdge()
         setContent {
             NivoraTheme {
@@ -143,14 +147,9 @@ private fun NivoraApp() {
     }
 
     val filteredApps = remember(apps, searchQuery) { AppCatalog.filterAndSort(apps, searchQuery) }
-    val background = Brush.verticalGradient(
-        colors = listOf(Color(0xFF192333), Midnight, Color(0xFF0A0D13))
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
             .padding(
                 top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                 bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -362,9 +361,9 @@ private fun Dock(
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xC9364659),
-                            Color(0xC3222D3E),
-                            Color(0xD9141B28)
+                            Color(0x665C6A7C),
+                            Color(0x55343F50),
+                            Color(0x66303B4B)
                         )
                     )
                 )
@@ -396,8 +395,8 @@ private fun Dock(
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color(0xFF66778D),
-                                    Color(0xFF354357)
+                                    Color(0xAA66778D),
+                                    Color(0x99354357)
                                 )
                             )
                         )
