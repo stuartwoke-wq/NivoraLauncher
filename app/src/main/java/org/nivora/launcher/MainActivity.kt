@@ -8,6 +8,8 @@ import androidx.compose.runtime.DisposableEffect
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
+import android.graphics.drawable.ColorDrawable
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -85,6 +87,8 @@ private val SecondaryText = Color(0xFFB8C1CF)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER)
+        window.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
         enableEdgeToEdge()
         setContent {
             NivoraTheme {
@@ -143,14 +147,9 @@ private fun NivoraApp() {
     }
 
     val filteredApps = remember(apps, searchQuery) { AppCatalog.filterAndSort(apps, searchQuery) }
-    val background = Brush.verticalGradient(
-        colors = listOf(Color(0xFF192333), Midnight, Color(0xFF0A0D13))
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
             .padding(
                 top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                 bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -231,28 +230,69 @@ private fun Header(onSettings: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, end = 14.dp, top = 18.dp, bottom = 8.dp),
+            .padding(start = 22.dp, end = 18.dp, top = 18.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Brush.linearGradient(listOf(Glacier, Aurora))),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("N", color = Midnight, fontWeight = FontWeight.Black, fontSize = 19.sp)
-                }
-                Spacer(Modifier.width(9.dp))
-                Text("NIVORA", color = Color.White, fontWeight = FontWeight.Bold, letterSpacing = 3.sp, fontSize = 17.sp)
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFFBDF7FF), Glacier, Aurora)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "N",
+                    color = Midnight,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Black
+                )
             }
-            Spacer(Modifier.height(5.dp))
-            Text("Your space. Your rules.", color = SecondaryText, fontSize = 12.sp)
+
+            Spacer(Modifier.width(12.dp))
+
+            Column {
+                Text(
+                    text = "Nivora",
+                    color = Color.White,
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = (-0.5).sp
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = "Your space. Your rules.",
+                    color = SecondaryText,
+                    fontSize = 12.sp
+                )
+            }
         }
-        IconButton(onClick = onSettings) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
+
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(CircleShape)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0x55FFFFFF), Color(0x222A3342))
+                    )
+                )
+                .clickable(onClick = onSettings),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                tint = Color.White,
+                modifier = Modifier.size(21.dp)
+            )
         }
     }
 }
@@ -335,34 +375,91 @@ private fun Dock(
     onAppClick: (LaunchableApp) -> Unit,
     onOpenApps: () -> Unit
 ) {
-    Row(
+    val dockShape = RoundedCornerShape(30.dp)
+
+    // Outer rim: a subtle glass highlight around the dock.
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 22.dp, end = 22.dp, top = 6.dp, bottom = 12.dp)
-            .clip(RoundedCornerShape(27.dp))
-            .background(Color(0xC92A3444))
-            .padding(horizontal = 15.dp, vertical = 11.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        apps.forEach { app ->
-            if (app.bitmap != null) {
-                Image(
-                    bitmap = app.bitmap.asImageBitmap(),
-                    contentDescription = app.label,
-                    modifier = Modifier.size(42.dp).clip(RoundedCornerShape(13.dp)).clickable { onAppClick(app) }
+            .clip(dockShape)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0x80FFFFFF),
+                        Color(0x2266D9E8),
+                        Color(0x33101725)
+                    )
                 )
-            }
-        }
+            )
+            .padding(1.dp)
+    ) {
+        // Inner surface: layered translucency without expensive live blur.
         Box(
             modifier = Modifier
-                .size(42.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color(0xFF465366))
-                .clickable(onClick = onOpenApps),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(29.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x665C6A7C),
+                            Color(0x55343F50),
+                            Color(0x66303B4B)
+                        )
+                    )
+                )
         ) {
-            Icon(Icons.Default.Apps, contentDescription = "All apps", tint = Color.White)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 13.dp, vertical = 11.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                apps.forEach { app ->
+                    if (app.bitmap != null) {
+                        Image(
+                            bitmap = app.bitmap.asImageBitmap(),
+                            contentDescription = app.label,
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(13.dp))
+                                .clickable { onAppClick(app) }
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xAA66778D),
+                                    Color(0x99354357)
+                                )
+                            )
+                        )
+                        .clickable(onClick = onOpenApps),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.Apps,
+                        contentDescription = "All apps",
+                        tint = Color.White
+                    )
+                }
+            }
+
+            // Fine top-edge reflection.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0x66FFFFFF))
+            )
         }
     }
 }
