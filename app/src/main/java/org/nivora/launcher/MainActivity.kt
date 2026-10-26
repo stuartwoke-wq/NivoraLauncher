@@ -230,28 +230,69 @@ private fun Header(onSettings: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, end = 14.dp, top = 18.dp, bottom = 8.dp),
+            .padding(start = 22.dp, end = 18.dp, top = 18.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Brush.linearGradient(listOf(Glacier, Aurora))),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("N", color = Midnight, fontWeight = FontWeight.Black, fontSize = 19.sp)
-                }
-                Spacer(Modifier.width(9.dp))
-                Text("NIVORA", color = Color.White, fontWeight = FontWeight.Bold, letterSpacing = 3.sp, fontSize = 17.sp)
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFFBDF7FF), Glacier, Aurora)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "N",
+                    color = Midnight,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Black
+                )
             }
-            Spacer(Modifier.height(5.dp))
-            Text("Your space. Your rules.", color = SecondaryText, fontSize = 12.sp)
+
+            Spacer(Modifier.width(12.dp))
+
+            Column {
+                Text(
+                    text = "Nivora",
+                    color = Color.White,
+                    fontSize = 23.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = (-0.5).sp
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = "Your space. Your rules.",
+                    color = SecondaryText,
+                    fontSize = 12.sp
+                )
+            }
         }
-        IconButton(onClick = onSettings) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
+
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(CircleShape)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0x55FFFFFF), Color(0x222A3342))
+                    )
+                )
+                .clickable(onClick = onSettings),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings",
+                tint = Color.White,
+                modifier = Modifier.size(21.dp)
+            )
         }
     }
 }
